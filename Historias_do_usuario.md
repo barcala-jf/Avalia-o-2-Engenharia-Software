@@ -8,7 +8,8 @@
 * **Critérios de Aceitação:** 
     1. O aluno pode escolher os horários e as matérias desejadas
     2. O sistema só pode mostrar os horários disponíveis
-    3. O sistema só não pode deixar que 2 alunos agendem o mesmo horário ao mesmo tempo
+    3. O sistema não pode deixar que 2 alunos agendem o mesmo horário ao mesmo tempo
+    4. O sistema exige que o perfil seja de um aluno para permitir o agendamento
 
 ---
 
