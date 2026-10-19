@@ -41,3 +41,11 @@ class TestRole(unittest.TestCase):
 
         with self.assertRaises(KeyError):
             identificar_perfil(usuarios, "Lorenzo")
+    
+    def test_perfil_invalido(self):
+        usuarios = {
+            "Lorenzo": {"role": "administrador"}
+        }
+
+        with self.assertRaises(ValueError):
+            identificar_perfil(usuarios, "Lorenzo")
