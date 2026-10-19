@@ -33,3 +33,11 @@ class TestRole(unittest.TestCase):
         }
         resultado = identificar_perfil(usuarios, "Lorenzo")
         self.assertEqual(resultado, "professor")
+    
+    def test_sem_role(self):
+        usuarios = {
+            "Lorenzo": {"senha": "1234"}
+        }
+
+        with self.assertRaises(KeyError):
+            identificar_perfil(usuarios, "Lorenzo")
