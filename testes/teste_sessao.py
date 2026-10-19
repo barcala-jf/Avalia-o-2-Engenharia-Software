@@ -10,3 +10,9 @@ class TestSessao(unittest.TestCase):
     def test_sessao_vazia(self):
         sessao = Sessao()
         self.assertIsNone(sessao.usuario_atual())
+
+    def test_encerrar_sessao(self):
+        sessao = Sessao()
+        sessao.iniciar_sessao("Lorenzo")
+        sessao.encerrar_sessao()
+        self.assertIsNone(sessao.usuario_atual())
