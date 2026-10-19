@@ -1,2 +1,3 @@
 def identificar_perfil(usuarios, user):
-    pass
+    if user in usuarios:
+        return usuarios[user]["role"]
