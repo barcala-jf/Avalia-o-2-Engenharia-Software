@@ -11,3 +11,18 @@ class TestRole(unittest.TestCase):
 
         resultado = identificar_perfil(usuarios, "Lorenzo")
         self.assertEqual(resultado, "aluno")
+
+    def test_perfil_inexistente(self):
+        usuarios = {
+            "Lorenzo": {"role": "aluno"}
+        }
+
+        resultado = identificar_perfil(usuarios, "Neymar")
+        self.assertIsNone(resultado, "aluno")
+
+    def test_perfil_monitor(self):
+        usuarios = {
+            "Lorenzo": {"role": "monitor"}
+        }
+        resultado = identificar_perfil(usuarios, "Lorenzo")
+        self.assertEqual(resultado, "monitor")
