@@ -4,6 +4,9 @@ class Sessao():
 
     def iniciar_sessao(self, user):
         self.usuario = user
+
+    def encerrar_sessao(self):
+        self.usuario = None
     
     def usuario_atual(self):
         return self.usuario
