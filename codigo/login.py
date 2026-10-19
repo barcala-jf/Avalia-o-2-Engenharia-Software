@@ -1,2 +1,8 @@
 def autenticar(usuarios, user, senha):
-    pass
+    if user in usuarios:
+        if senha == usuarios[user]["senha"]:
+            return True
+        else:
+            return False
+    else:
+        return False
