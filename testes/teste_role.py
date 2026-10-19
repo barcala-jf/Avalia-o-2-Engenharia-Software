@@ -26,3 +26,10 @@ class TestRole(unittest.TestCase):
         }
         resultado = identificar_perfil(usuarios, "Lorenzo")
         self.assertEqual(resultado, "monitor")
+
+    def test_perfil_professor(self):
+        usuarios = {
+            "Lorenzo": {"role": "professor"}
+        }
+        resultado = identificar_perfil(usuarios, "Lorenzo")
+        self.assertEqual(resultado, "professor")
