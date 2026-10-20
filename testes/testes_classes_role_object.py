@@ -1,4 +1,11 @@
 import unittest
+from codigo.usuario_role_object import(
+    Usuario,
+    RoleUsuario,
+    Aluno,
+    Monitor,
+    Professor
+)
 
 class TestRoleObject(unittest.TestCase):
 
