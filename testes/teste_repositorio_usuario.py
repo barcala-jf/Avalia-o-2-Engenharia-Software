@@ -8,6 +8,6 @@ class TestRepositorio(unittest.TestCase):
         repositorio = RepositorioUsuario()
         usuario = Usuario(nome="Lorenzo", user="2669587", senha="1234")
         repositorio.salvar(usuario)
-        resultado = repositorio.buscar("Lorenzo")
+        resultado = repositorio.buscar("2669587")
         self.assertIs(resultado, usuario)
         

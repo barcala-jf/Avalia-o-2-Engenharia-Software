@@ -3,7 +3,7 @@ class RepositorioUsuario:
         self.usuarios = {}
 
     def salvar(self, usuario):
-        pass
+        self.usuarios[usuario.get_user()] = usuario
 
     def buscar(self, login):
-        pass
+        return self.usuarios.get(login)
