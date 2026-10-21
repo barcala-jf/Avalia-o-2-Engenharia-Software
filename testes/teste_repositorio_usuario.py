@@ -16,3 +16,11 @@ class TestRepositorio(unittest.TestCase):
         resultado = repositorio.buscar("123456")
         self.assertIsNone(resultado)
         
+    def test_atualizar_usuario(self):
+        repositorio = RepositorioUsuario()
+        usuario = Usuario(nome="Lorenzo", user="2669587", senha="1234")
+        repositorio.salvar(usuario)
+        usuario_atualizado = Usuario(nome="Lorenzo Brugnolo", user="2669587", senha="nova")
+        repositorio.atualizar(usuario_atualizado)
+        resultado = repositorio.buscar("2669587")
+        self.assertIs(resultado, usuario_atualizado)
