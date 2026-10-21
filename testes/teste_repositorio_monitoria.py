@@ -35,3 +35,29 @@ class TestRepositorioMonitorias(unittest.TestCase):
         identificador = repositorio.salvar(monitoria)
         repositorio.excluir(identificador)
         self.assertIsNone(repositorio.buscar(identificador))
+    
+    def test_atualizar_monitoria(self):
+        repositorio = RepositorioMonitorias()
+
+        monitoria = Monitoria(
+            materia="Calculo",
+            dia="Quarta-feira",
+            hora_inicio="14:00",
+            hora_fim="15:00",
+            Vagas=2
+        )
+        
+        identificador = repositorio.salvar(monitoria)
+
+        atualizada = Monitoria(
+            materia="Calculo",
+            dia="Sexta-feira",
+            hora_inicio="16:00",
+            hora_fim="17:00",
+            Vagas=3
+        )
+
+        repositorio.atualizar(identificador, atualizada)
+
+        resultado = repositorio.buscar(identificador)
+        self.assertIs(resultado, atualizada)
