@@ -13,4 +13,4 @@ class RepositorioMonitorias:
         return self.monitorias.get(identificador)
 
     def excluir(self, identificador):
-        pass
+        self.monitorias.pop(identificador, None)
