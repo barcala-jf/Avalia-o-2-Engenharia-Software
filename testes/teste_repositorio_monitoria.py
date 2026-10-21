@@ -46,7 +46,7 @@ class TestRepositorioMonitorias(unittest.TestCase):
             hora_fim="15:00",
             Vagas=2
         )
-        
+
         identificador = repositorio.salvar(monitoria)
 
         atualizada = Monitoria(
@@ -61,3 +61,16 @@ class TestRepositorioMonitorias(unittest.TestCase):
 
         resultado = repositorio.buscar(identificador)
         self.assertIs(resultado, atualizada)
+
+    def test_atualizar_monitoria_inexistente(self):
+        repositorio = RepositorioMonitorias()
+        monitoria = Monitoria(
+            materia="Calculo",
+            dia="Quarta-feira",
+            hora_inicio="14:00",
+            hora_fim="15:00",
+            Vagas=2
+        )
+
+        with self.assertRaises(KeyError):
+            repositorio.atualizar(999, monitoria)
