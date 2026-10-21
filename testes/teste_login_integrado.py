@@ -2,7 +2,8 @@ import unittest
 
 from codigo.login import realizar_login
 from codigo.repositorio_usuario import RepositorioUsuario
-from codigo.usuario_role_object import Usuario, Aluno
+from codigo.usuario_role_object import Usuario, Aluno, Professor, Monitor
+
 
 
 class TestLoginIntegrado(unittest.TestCase):
@@ -40,3 +41,31 @@ class TestLoginIntegrado(unittest.TestCase):
 
         with self.assertRaisesRegex(ValueError, "Credenciais inválidas"):
             realizar_login(repositorio, "barbeirosUtfpr", "67")
+
+    def test_login_monitor_preserva_roles_e_disciplinas(self):
+        repositorio = RepositorioUsuario()
+
+        aluno = Usuario(
+            nome="Lorenzo",
+            user="2669587",
+            senha="1234",
+            role_inicial=Aluno()
+        )
+        professor = Usuario(
+            nome="Luva de pedreiro",
+            user="professor",
+            senha="receba",
+            role_inicial=Professor(["Calculo"])
+        )
+
+        professor.get_role(Professor).atribuir_monitor(aluno, "Calculo")
+        repositorio.salvar(aluno)
+
+        resultado = realizar_login(repositorio, "2669587", "1234")
+
+        self.assertTrue(resultado.have_role(Aluno))
+        self.assertTrue(resultado.have_role(Monitor))
+        self.assertEqual(
+            resultado.get_role(Monitor).get_disciplinas_monitorias(),
+            ["Calculo"]
+        ) 
