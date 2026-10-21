@@ -7,6 +7,3 @@ class RepositorioUsuario:
 
     def buscar(self, login):
         return self.usuarios.get(login)
-
-    def atualizar(self, usuario):
-        pass
