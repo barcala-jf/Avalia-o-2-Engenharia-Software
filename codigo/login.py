@@ -6,4 +6,9 @@ def autenticar(usuarios, user, senha):
         return False
 
 def realizar_login(repositorio, login, senha):
-    pass
+    usuario = repositorio.buscar(login)
+
+    if usuario is None or usuario.senha != senha:
+        raise ValueError("Credenciais inválidas")
+
+    return usuario
