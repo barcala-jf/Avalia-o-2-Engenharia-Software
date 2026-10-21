@@ -11,3 +11,6 @@ class RepositorioMonitorias:
 
     def buscar(self, identificador):
         return self.monitorias.get(identificador)
+
+    def excluir(self, identificador):
+        pass

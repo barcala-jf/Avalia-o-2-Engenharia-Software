@@ -20,3 +20,18 @@ class TestRepositorioMonitorias(unittest.TestCase):
         resultado = repositorio.buscar(identificador)
 
         self.assertIs(resultado, monitoria)
+
+    def test_excluir_monitoria(self):
+        repositorio = RepositorioMonitorias()
+
+        monitoria = Monitoria(
+            materia="Calculo",
+            dia="Quarta-feira",
+            hora_inicio="14:00",
+            hora_fim="15:00",
+            Vagas=2
+        )
+
+        identificador = repositorio.salvar(monitoria)
+        repositorio.excluir(identificador)
+        self.assertIsNone(repositorio.buscar(identificador))
