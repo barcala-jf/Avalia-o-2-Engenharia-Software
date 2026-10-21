@@ -10,4 +10,9 @@ class TestRepositorio(unittest.TestCase):
         repositorio.salvar(usuario)
         resultado = repositorio.buscar("2669587")
         self.assertIs(resultado, usuario)
+
+    def test_buscar_usuario_inexistente(self):
+        repositorio = RepositorioUsuario()
+        resultado = repositorio.buscar("123456")
+        self.assertIsNone(resultado)
         
