@@ -14,3 +14,9 @@ class RepositorioMonitorias:
 
     def excluir(self, identificador):
         self.monitorias.pop(identificador, None)
+
+    def atualizar(self, identificador, monitoria):
+        if identificador not in self.monitorias:
+            raise KeyError("Monitoria não encontrada")
+
+        self.monitorias[identificador] = monitoria
