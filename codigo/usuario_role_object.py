@@ -1,6 +1,9 @@
 from abc import ABC
 from typing import Dict, Type, TypeVar, Optional
 
+from codigo.monitorias import Monitoria, Atendimento
+
+
 U = TypeVar("U", bound="RoleUsuario")
 
 
@@ -16,30 +19,29 @@ class Aluno(RoleUsuario):
     def __init__(self, materias: Optional[list[str]] = None) -> None:
         super().__init__()
         self.materias: list[str] = list(materias) if materias is not None else []
+        self.monitorias_marcadas: list['Atendimento'] = []
 
     def list_monitorias(self):
         ''' Deve listar as monitorias disponíveis na semana'''
         pass
 
-    def marca_monitoria(self, monitoria):
+    def marcar_monitoria(self, atendimento: Atendimento):
         ''' Deve selecionar e marcar a monitoria'''
-        pass
+        self.get_monitorias_marcadas().append(atendimento)
+        atendimento.marcar(self.usuario)
 
-    def cancelar_monitoria(self, monitoria):
+    def cancelar_monitoria(self, atendimento: Atendimento):
         ''' Deve cancelar uma monitoria já marcada'''
-        pass
+        self.get_monitorias_marcadas().remove(atendimento)
+        atendimento.desmarcar(self.usuario.get_user())
 
     def get_monitorias_participadas(self):
         ''' Deve listar as monitorias já participadas'''
-        pass
-
-    def get_monitorias_canceladas(self):
-        ''' Deve listar as monitorias já canceladas'''
-        pass
+        return self.monitorias_marcadas     
 
     def get_monitorias_marcadas(self):
         ''' Deve listar as monitorias marcadas da semana'''
-        pass
+        return self.monitorias_marcadas
 
     def get_materias(self) -> list[str]:
         return self.materias
@@ -51,22 +53,43 @@ class Monitor(RoleUsuario):
         self.disciplinas_monitorias: list[str] = (
             list(disciplinas_monitorias) if disciplinas_monitorias is not None else []
         )
+        self.monitorias: list[Monitoria] = []
+        self.monitorias_canceladas: list[Monitoria] = []
 
-    def criar_monitoria(self):
+    def criar_monitoria(self, materia: str, dia: str, hora_inicio: str , hora_fim: str, Vagas: int):
         ''' Deve criar uma monitoria com hora de uma materia que ele seja monitor'''
-        pass
+        if  materia not in self.disciplinas_monitorias:
+            raise PermissionError(f"O monitor {self} não pode criar monitoria para a matéria {materia}.")
+        
+        self.monitoria = Monitoria(self, materia, dia, hora_inicio, hora_fim, Vagas)
+        self.monitorias.append(self.monitoria)
 
-    def cancelar_monitoria(self):
+    def cancelar_monitoria(self, monitoria: Monitoria):
         ''' Cancela uma monitoria já marcada para aquela semana'''
-        pass
+        monitoria_encontrada = self.get_monitoria(monitoria)
+        
+        if monitoria_encontrada is None:
+            raise ValueError("A monitoria solicitada não foi encontrada no sistema.")
+            
+        self.monitorias_canceladas.append(monitoria_encontrada)
+        monitoria_encontrada.cancelar_monitoria()
+
+    def reativar_monitoria(self, monitoria: Monitoria):
+        ''' Reativa uma monitoria cancelada para aquela semana'''
+        self.monitorias_canceladas.remove(self.get_monitoria(monitoria))
+        self.get_monitoria(monitoria).reativar_monitoria()
+
+    def get_monitoria(self, monitoria: Monitoria):
+        ''' Deve selecionar uma monitoria especifica da lista de monitorias do monitor'''
+        return self.monitorias[self.monitorias.index(monitoria)]
 
     def get_monitorias(self):
         ''' Deve listar as monitorias criadas'''
-        pass
+        return self.monitorias
 
     def get_monitorias_canceladas(self):
         ''' Deve listar as monitorias canceladas'''
-        pass
+        return self.monitorias_canceladas
 
     def get_disciplinas_monitorias(self) -> list[str]:
         ''' Deve listar as matérias em que ele é monitor'''

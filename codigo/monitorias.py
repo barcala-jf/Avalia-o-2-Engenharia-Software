@@ -34,7 +34,10 @@ class Atendimento:
             return False
 
 class Monitoria:
-    def __init__(self, materia: str, dia: str, hora_inicio: str , hora_fim: str, Vagas: int) -> None:
+    def __init__(self, monitor: 'Monitor', materia: str, dia: str, hora_inicio: str , hora_fim: str, Vagas: int) -> None:
+        
+        self.monitor = monitor
+        self.materia = materia
 
         i, f = datetime.strptime(hora_inicio, "%H:%M"), datetime.strptime(hora_fim, "%H:%M")
         self.hora_inicio = i.strftime("%H:%M")
@@ -44,7 +47,6 @@ class Monitoria:
         for hora in self._gerar_horarios(i, f):
             self.atendimentos.append(Atendimento(hora, Vagas, self))
 
-        self.materia = materia
         self.dia = dia
 
         self.alunos_cadastrados = []
@@ -68,7 +70,13 @@ class Monitoria:
 
         self.cancelado = True
 
-    def registrar_cancelamento(self, aluno: str) -> None:
+    def reativar_monitoria(self) -> None:
+        for atendimento in self.atendimentos:
+            atendimento.cancelado = False
+
+        self.cancelado = False
+
+    def registrar_cancelamento_aluno(self, aluno: str) -> None:
         self.alunos_cancelados.append(aluno)
 
     def get_atendimentos(self) -> list[Atendimento]:

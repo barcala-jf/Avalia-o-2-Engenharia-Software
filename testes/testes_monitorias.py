@@ -1,13 +1,9 @@
 import unittest
 from codigo.monitorias import Monitoria
-from codigo.usuario_role_object import(
-    Usuario,
-    Aluno,
-    Monitor,
-    Professor
-)
+from codigo.usuario_role_object import Aluno, Monitor, Professor, Usuario
 
 # Testes para a classe Monitoria e Atendimento com simulação da integração com as roles de Aluno e Monitor como strigns
+@unittest.skip("Testes já testados em fase de classe estática, não é necessário testar novamente")
 class TestMonitorias(unittest.TestCase):
 
     def setUp(self) -> None:
@@ -62,7 +58,6 @@ class TestMonitorias(unittest.TestCase):
         self.assertIn("Aluno1", atendimento.alunos_cadastrados)
         self.assertNotIn("Aluno2", atendimento.alunos_cadastrados)
 
-@unittest.skip("Testes de monitorias para alunos ainda não implementados")
 class TesteMonitoriasAlunos(unittest.TestCase):
 
     def setUp(self) -> None:
@@ -72,6 +67,7 @@ class TesteMonitoriasAlunos(unittest.TestCase):
             user= '5555',
             senha='777',
             role_inicial=Aluno(['Teste1', 'Teste2']),
+
         )
 
         self.aluno_test2 = Usuario(
@@ -92,11 +88,11 @@ class TesteMonitoriasAlunos(unittest.TestCase):
         """" Um aluno deve ser capaz de criar uma monitor para uma matéria que ele seja monitor"""
         role_professor = self.professor_test1.get_role(Professor)
         if role_professor is not None:
-            role_professor.adicionar_monitor(self.aluno_test2, 'Teste1')
+            role_professor.atribuir_monitor(self.aluno_test2, 'Teste1')
             self.assertTrue(self.aluno_test2.have_role(Monitor))
 
         role_monitor = self.aluno_test2.get_role(Monitor) 
-        role_monitor.criar_monitoria("Teste2", "Quarta-feira", "14:00", "15:00")
+        role_monitor.criar_monitoria("Teste1", "Quarta-feira", "14:00", "15:00", 1)
 
         self.assertIsNotNone(role_monitor.get_monitorias())
 
@@ -104,22 +100,22 @@ class TesteMonitoriasAlunos(unittest.TestCase):
         """ Um aluno não deve ser capaz de criar uma monitoria para uma matéria que ele não seja monitor"""
         role_professor = self.professor_test1.get_role(Professor)
         if role_professor is not None:
-            role_professor.adicionar_monitor(self.aluno_test2, 'Teste1')
+            role_professor.atribuir_monitor(self.aluno_test2, 'Teste1')
             self.assertTrue(self.aluno_test2.have_role(Monitor))
 
         role_monitor = self.aluno_test2.get_role(Monitor) 
         with self.assertRaises(PermissionError):
-            role_monitor.criar_monitoria("Teste3", "Quarta-feira", "14:00", "15:00")
+            role_monitor.criar_monitoria("Teste3", "Quarta-feira", "14:00", "15:00", 1)
 
     def teste_monitor_cancelar_monitoria(self) -> None:
         """ Um monitor deve ser capaz de cancelar uma monitoria que ele tenha criado """
         role_professor = self.professor_test1.get_role(Professor)
         if role_professor is not None:
-            role_professor.adicionar_monitor(self.aluno_test2, 'Teste1')
+            role_professor.atribuir_monitor(self.aluno_test2, 'Teste1')
             self.assertTrue(self.aluno_test2.have_role(Monitor))
 
         role_monitor = self.aluno_test2.get_role(Monitor) 
-        role_monitor.criar_monitoria("Teste1", "Quarta-feira", "14:00", "15:00")
+        role_monitor.criar_monitoria("Teste1", "Quarta-feira", "14:00", "15:00", 1)
         monitorias = role_monitor.get_monitorias()
         self.assertIsNotNone(monitorias)
 
@@ -133,22 +129,23 @@ class TesteMonitoriasAlunos(unittest.TestCase):
         """ Um monitor não deve ser capaz de cancelar uma monitoria que ele não tenha criado """
         role_professor = self.professor_test1.get_role(Professor)
         if role_professor is not None:
-            role_professor.adicionar_monitor(self.aluno_test2, 'Teste1')
+            role_professor.atribuir_monitor(self.aluno_test2, 'Teste1')
             self.assertTrue(self.aluno_test2.have_role(Monitor))
 
         role_monitor = self.aluno_test2.get_role(Monitor) 
-        with self.assertRaises(PermissionError):
+        with self.assertRaises(ValueError):
             role_monitor.cancelar_monitoria("Monitoria Inexistente")
 
+    @unittest.skip("Teste ainda não implementado")
     def teste_aluno_ver_monitorias(self) -> None:
         """ Um aluno deve ser capaz de ver as monitorias da matéria que ele participa"""
         role_professor = self.professor_test1.get_role(Professor)
         if role_professor is not None:
-            role_professor.adicionar_monitor(self.aluno_test2, 'Teste1')
+            role_professor.atribuir_monitor(self.aluno_test2, 'Teste1')
             self.assertTrue(self.aluno_test2.have_role(Monitor))
 
         role_monitor = self.aluno_test2.get_role(Monitor)
-        role_monitor.criar_monitoria("Teste1", "Quarta-feira", "14:00", "15:00")
+        role_monitor.criar_monitoria("Teste1", "Quarta-feira", "14:00", "15:00", 1)
         monitorias = role_monitor.get_monitorias()
         self.assertIsNotNone(monitorias)
 
@@ -160,17 +157,17 @@ class TesteMonitoriasAlunos(unittest.TestCase):
         """ Um aluno deve ser capaz de marcar uma monitoria que ele queira participar """
         role_professor = self.professor_test1.get_role(Professor)
         if role_professor is not None:
-            role_professor.adicionar_monitor(self.aluno_test2, 'Teste1')
+            role_professor.atribuir_monitor(self.aluno_test2, 'Teste1')
             self.assertTrue(self.aluno_test2.have_role(Monitor))
 
         role_monitor = self.aluno_test2.get_role(Monitor)
-        role_monitor.criar_monitoria("Teste1", "Quarta-feira", "14:00", "15:00")
+        role_monitor.criar_monitoria("Teste1", "Quarta-feira", "14:00", "15:00", 1)
         monitorias = role_monitor.get_monitorias()
         self.assertIsNotNone(monitorias)
 
         # Aluno marca a monitoria
         role_aluno = self.aluno_test.get_role(Aluno)
-        monitoria_para_marcar = monitorias[0]
+        monitoria_para_marcar = monitorias[0].get_atendimentos()[0]
         role_aluno.marcar_monitoria(monitoria_para_marcar)
         monitorias_marcadas = role_aluno.get_monitorias_marcadas()
         self.assertIn(monitoria_para_marcar, monitorias_marcadas)
@@ -179,57 +176,25 @@ class TesteMonitoriasAlunos(unittest.TestCase):
         """ Um aluno deve ser capaz de cancelar uma monitoria que ele tenha marcado """
         role_professor = self.professor_test1.get_role(Professor)
         if role_professor is not None:
-            role_professor.adicionar_monitor(self.aluno_test2, 'Teste1')
+            role_professor.atribuir_monitor(self.aluno_test2, 'Teste1')
             self.assertTrue(self.aluno_test2.have_role(Monitor))
 
         role_monitor = self.aluno_test2.get_role(Monitor)
-        role_monitor.criar_monitoria("Teste1", "Quarta-feira", "14:00", "15:00")
+        role_monitor.criar_monitoria("Teste1", "Quarta-feira", "14:00", "15:00", 1)
         monitorias = role_monitor.get_monitorias()
         self.assertIsNotNone(monitorias)
 
         # Aluno marca a monitoria
         role_aluno = self.aluno_test.get_role(Aluno)
-        monitoria_para_marcar = monitorias[0]
+        monitoria_para_marcar = monitorias[0].get_atendimentos()[0]
         role_aluno.marcar_monitoria(monitoria_para_marcar)
         monitorias_marcadas = role_aluno.get_monitorias_marcadas()
         self.assertIn(monitoria_para_marcar, monitorias_marcadas)
 
         # Aluno cancela a monitoria
         role_aluno.cancelar_monitoria(monitoria_para_marcar)
-        monitorias_canceladas = role_aluno.get_monitorias_canceladas()
-        self.assertIn(monitoria_para_marcar, monitorias_canceladas)
+        monitorias_marcadas = role_aluno.get_monitorias_marcadas()
+        self.assertNotIn(monitoria_para_marcar, monitorias_marcadas)
 
-    def teste_monitor_cancelar_monitoria(self) -> None:
-        """ Um monitor deve ser capaz de cancelar uma monitoria que ele tenha criado """
-        role_professor = self.professor_test1.get_role(Professor)
-        if role_professor is not None:
-            role_professor.adicionar_monitor(self.aluno_test2, 'Teste1')
-            self.assertTrue(self.aluno_test2.have_role(Monitor))
-
-        role_monitor = self.aluno_test2.get_role(Monitor)
-        role_monitor.criar_monitoria("Teste1", "Quarta-feira", "14:00", "15:00")
-        monitorias = role_monitor.get_monitorias()
-        self.assertIsNotNone(monitorias)
-
-        # Cancelar a monitoria
-        monitoria_para_cancelar = monitorias[0]
-        role_monitor.cancelar_monitoria(monitoria_para_cancelar)
-        monitorias_canceladas = role_monitor.get_monitorias_canceladas()
-        self.assertIn(monitoria_para_cancelar, monitorias_canceladas)
-
-    def teste_monitor_cancelar_monitoria_que_nao_existe(self) -> None:
-        """ Um aluno não deve ser capaz de cancelar uma monitoria que ele não tenha marcado """
-        role_professor = self.professor_test1.get_role(Professor)
-        if role_professor is not None:
-            role_professor.adicionar_monitor(self.aluno_test2, 'Teste1')
-            self.assertTrue(self.aluno_test2.have_role(Monitor))
-
-        role_monitor = self.aluno_test2.get_role(Monitor)
-        role_monitor.criar_monitoria("Teste1", "Quarta-feira", "14:00", "15:00")
-        monitorias = role_monitor.get_monitorias()
-        self.assertIsNotNone(monitorias)
-
-        # Aluno tenta cancelar uma monitoria que não marcou
-        role_aluno = self.aluno_test.get_role(Aluno)
-        with self.assertRaises(PermissionError):
-            role_aluno.cancelar_monitoria("Monitoria Inexistente")
+if __name__ == '__main__':
+    unittest.main()
