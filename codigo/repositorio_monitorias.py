@@ -1,9 +1,13 @@
 class RepositorioMonitorias:
     def __init__(self):
-        pass
+        self.monitorias = {}
+        self.proximo_id = 1
 
     def salvar(self, monitoria):
-        pass
+        identificador = self.proximo_id
+        self.monitorias[identificador] = monitoria
+        self.proximo_id +=1
+        return identificador
 
     def buscar(self, identificador):
-        pass
+        return self.monitorias.get(identificador)
