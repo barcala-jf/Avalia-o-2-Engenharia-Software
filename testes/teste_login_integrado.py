@@ -69,3 +69,19 @@ class TestLoginIntegrado(unittest.TestCase):
             resultado.get_role(Monitor).get_disciplinas_monitorias(),
             ["Calculo"]
         ) 
+
+    def test_login_professor_preserva_perfil(self):
+        repositorio = RepositorioUsuario()
+        professor = Usuario(
+            nome="Professor",
+            user="professor",
+            senha="5678",
+            role_inicial=Professor(["Calculo"])
+        )
+        repositorio.salvar(professor)
+
+        resultado = realizar_login(repositorio, "professor", "5678")
+
+        self.assertIs(resultado, professor)
+        self.assertTrue(resultado.have_role(Professor))
+        self.assertFalse(resultado.have_role(Monitor))
