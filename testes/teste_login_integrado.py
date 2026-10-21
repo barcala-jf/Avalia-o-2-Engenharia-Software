@@ -20,3 +20,23 @@ class TestLoginIntegrado(unittest.TestCase):
 
         self.assertIs(resultado, usuario)
         self.assertTrue(resultado.have_role(Aluno))
+
+    def test_login_com_senha_incorreta(self):
+        repositorio = RepositorioUsuario()
+        usuario = Usuario(
+            nome="Lorenzo",
+            user="2669587",
+            senha="neymargoat",
+            role_inicial=Aluno()
+        )
+        repositorio.salvar(usuario)
+
+        with self.assertRaisesRegex(ValueError, "Credenciais inválidas"):
+            realizar_login(repositorio, "2669587", "lionelmessigoat123")
+
+
+    def test_login_com_usuario_inexistente(self):
+        repositorio = RepositorioUsuario()
+
+        with self.assertRaisesRegex(ValueError, "Credenciais inválidas"):
+            realizar_login(repositorio, "barbeirosUtfpr", "67")
