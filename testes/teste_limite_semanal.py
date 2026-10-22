@@ -1,6 +1,5 @@
 import unittest
 from datetime import date
-
 from codigo.monitorias import Monitoria
 from codigo.usuario_role_object import Monitor
 from codigo.usuario_role_object import Usuario, Aluno, Monitor

@@ -2,6 +2,7 @@ import unittest
 
 from codigo.monitorias import Monitoria
 from codigo.usuario_role_object import Usuario, Aluno, Monitor
+from datetime import date
 
 
 class TestReservas(unittest.TestCase):
@@ -13,7 +14,8 @@ class TestReservas(unittest.TestCase):
             dia="Quarta-feira",
             hora_inicio="14:00",
             hora_fim="14:30",
-            Vagas=1
+            Vagas=1,
+            data=date(2026, 10, 21)
         )
         atendimento = monitoria.get_atendimentos()[0]
 
@@ -37,7 +39,8 @@ class TestReservas(unittest.TestCase):
             dia="Quarta-feira",
             hora_inicio="14:00",
             hora_fim="14:30",
-            Vagas=1
+            Vagas=1,
+            data=date(2026, 10, 21)
         )
         atendimento = monitoria.get_atendimentos()[0]
         aluno = Usuario("Lorenzo", "1", "1234", Aluno())
@@ -56,7 +59,8 @@ class TestReservas(unittest.TestCase):
             dia="Quarta-feira",
             hora_inicio="14:00",
             hora_fim="15:00",
-            Vagas=1
+            Vagas=1,
+            data=date(2026, 10, 21)
         )
         atendimento = monitoria.get_atendimentos()[0]
         atendimento.cancelar()

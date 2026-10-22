@@ -31,20 +31,22 @@ class Aluno(RoleUsuario):
 
         monitoria = atendimento.monitoria
 
-        if monitoria.data is not None:
-            semana = monitoria.data.isocalendar()[:2]
+        if monitoria.data is None:
+            raise ValueError("Data da monitoria obrigatória")
 
-            reservas_na_semana = sum(
-                1
-                for reserva in self.monitorias_marcadas
-                if not reserva.cancelado
-                and reserva.monitoria.materia == monitoria.materia
-                and reserva.monitoria.data is not None
-                and reserva.monitoria.data.isocalendar()[:2] == semana
-            )
+        semana = monitoria.data.isocalendar()[:2]
 
-            if reservas_na_semana >= 2:
-                raise ValueError("Limite semanal atingido para esta disciplina")
+        reservas_na_semana = sum(
+            1
+            for reserva in self.monitorias_marcadas
+            if not reserva.cancelado
+            and reserva.monitoria.materia == monitoria.materia
+            and reserva.monitoria.data is not None
+            and reserva.monitoria.data.isocalendar()[:2] == semana
+        )
+
+        if reservas_na_semana >= 2:
+            raise ValueError("Limite semanal atingido para esta disciplina")
 
         if not atendimento.marcar(self.usuario):
             raise ValueError("Horário Lotado")
