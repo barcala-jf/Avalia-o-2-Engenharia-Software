@@ -73,3 +73,24 @@ class TestConsultaMonitorias(unittest.TestCase):
 
         self.assertTrue(repositorio.listar()[0].cancelado)
         self.assertEqual(papel_aluno.list_monitorias(repositorio), [])
+
+    def test_monitor_nao_cancela_monitoria_de_outro(self):
+        dono = Monitor(["Calculo"])
+        outro_monitor = Monitor(["Calculo"])
+
+        dono.criar_monitoria(
+            materia="Calculo",
+            dia="Quarta-feira",
+            hora_inicio="14:00",
+            hora_fim="15:00",
+            Vagas=2,
+            data=date(2026, 10, 28)
+        )
+        monitoria = dono.get_monitorias()[-1]
+
+        with self.assertRaises(ValueError):
+            outro_monitor.cancelar_monitoria(monitoria)
+
+        self.assertFalse(monitoria.cancelado)
+        self.assertTrue(all(not atendimento.cancelado for atendimento in monitoria.get_atendimentos()))
+        self.assertEqual(outro_monitor.get_monitorias_canceladas(), [])
