@@ -2,13 +2,19 @@ import unittest
 
 from codigo.monitorias import Monitoria
 from codigo.repositorio_monitorias import RepositorioMonitorias
+from codigo.usuario_role_object import Monitor
 
 
 class TestRepositorioMonitorias(unittest.TestCase):
+    def setUp(self):
+        self.monitor = Monitor(["Calculo"])
+
     def test_salvar_e_buscar_monitoria(self):
         repositorio = RepositorioMonitorias()
+        
 
         monitoria = Monitoria(
+            monitor=self.monitor,
             materia="Calculo",
             dia="Quarta-feira",
             hora_inicio="14:00",
@@ -25,6 +31,7 @@ class TestRepositorioMonitorias(unittest.TestCase):
         repositorio = RepositorioMonitorias()
 
         monitoria = Monitoria(
+            monitor=self.monitor,
             materia="Calculo",
             dia="Quarta-feira",
             hora_inicio="14:00",
@@ -40,6 +47,7 @@ class TestRepositorioMonitorias(unittest.TestCase):
         repositorio = RepositorioMonitorias()
 
         monitoria = Monitoria(
+            monitor=self.monitor,
             materia="Calculo",
             dia="Quarta-feira",
             hora_inicio="14:00",
@@ -50,6 +58,7 @@ class TestRepositorioMonitorias(unittest.TestCase):
         identificador = repositorio.salvar(monitoria)
 
         atualizada = Monitoria(
+            monitor=self.monitor,
             materia="Calculo",
             dia="Sexta-feira",
             hora_inicio="16:00",
@@ -65,6 +74,7 @@ class TestRepositorioMonitorias(unittest.TestCase):
     def test_atualizar_monitoria_inexistente(self):
         repositorio = RepositorioMonitorias()
         monitoria = Monitoria(
+            monitor=self.monitor,
             materia="Calculo",
             dia="Quarta-feira",
             hora_inicio="14:00",
