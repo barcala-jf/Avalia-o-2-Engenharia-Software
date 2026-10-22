@@ -209,5 +209,10 @@ class TesteMonitoriasAlunos(unittest.TestCase):
         monitorias_marcadas = role_aluno.get_monitorias_marcadas()
         self.assertNotIn(monitoria_para_marcar, monitorias_marcadas)
 
+    def teste_aluno_criar_monitoria(self) -> None:
+        role_aluno = self.aluno_test
+        with self.assertRaises(AttributeError):
+            role_aluno.criar_monitoria()
+
 if __name__ == '__main__':
     unittest.main()
