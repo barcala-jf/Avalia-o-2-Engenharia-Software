@@ -103,7 +103,7 @@ class Professor(RoleUsuario):
             list(disciplinas_ministradas) if disciplinas_ministradas is not None else []
         )
 
-    def atribuir_monitor(self, alvo: "Usuario", disciplina: str) -> None:
+    def atribuir_monitor(self, alvo: "Usuario", disciplina: str, repositorio=None) -> None:
         # 1. O atribuído deve obrigatoriamente ser um Aluno
         if not alvo.have_role(Aluno):
             raise PermissionError(
@@ -125,6 +125,9 @@ class Professor(RoleUsuario):
             # Caso ainda não seja Monitor, cria a role Monitor com a primeira disciplina
             novo_monitor = Monitor(disciplinas_monitorias=[disciplina])
             alvo._definir_role_interno(novo_monitor)
+
+        if repositorio is not None:
+            repositorio.salvar(alvo)
 
     def retirar_monitoria(self, alvo: "Usuario", disciplina: str) -> None:
         # 1. Verifica se o professor leciona a disciplina que ele quer retirar
