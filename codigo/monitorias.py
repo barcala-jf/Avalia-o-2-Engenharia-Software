@@ -25,13 +25,15 @@ class Atendimento:
                 return True
             return False
 
-    def desmarcar(self, aluno: str) -> bool:
+    def desmarcar(self, aluno) -> bool:
         with self.lock: # Blqueia o acesso a recursos compartilhados para evitar condições de corrida
-            if aluno in self.alunos_cadastrados:
-                self.alunos_cadastrados.remove(aluno)
-                self.monitoria.registrar_cancelamento(aluno) 
-                return True
-            return False
+            if aluno not in self.alunos_cadastrados:
+                return False
+
+            self.alunos_cadastrados.remove(aluno)
+            self.lotado = len(self.alunos_cadastrados) >= self.vagas
+            self.monitoria.registrar_cancelamento_aluno(aluno)
+            return True
 
 class Monitoria:
     def __init__(self, monitor: 'Monitor', materia: str, dia: str, hora_inicio: str , hora_fim: str, Vagas: int) -> None:

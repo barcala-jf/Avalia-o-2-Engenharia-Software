@@ -37,8 +37,13 @@ class Aluno(RoleUsuario):
 
     def cancelar_monitoria(self, atendimento: Atendimento):
         ''' Deve cancelar uma monitoria já marcada'''
-        self.get_monitorias_marcadas().remove(atendimento)
-        atendimento.desmarcar(self.usuario.get_user())
+        if atendimento not in self.monitorias_marcadas:
+            raise ValueError("Reserva não encontrada")
+
+        if not atendimento.desmarcar(self.usuario):
+            raise ValueError("Aluno não cadastrado no atendimento")
+
+        self.monitorias_marcadas.remove(atendimento)
 
     def get_monitorias_participadas(self):
         ''' Deve listar as monitorias já participadas'''
