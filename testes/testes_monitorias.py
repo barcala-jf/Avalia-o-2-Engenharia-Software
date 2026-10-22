@@ -2,15 +2,15 @@ import unittest
 from codigo.monitorias import Monitoria
 from codigo.usuario_role_object import Aluno, Monitor, Professor, Usuario
 from datetime import date
+from codigo.repositorio_monitorias import RepositorioMonitorias
 
-# Testes para a classe Monitoria e Atendimento com simulação da integração com as roles de Aluno e Monitor como strigns
-@unittest.skip("Testes já testados em fase de classe estática, não é necessário testar novamente")
 class TestMonitorias(unittest.TestCase):
 
     def setUp(self) -> None:
         """ Cria ambiente de testes """
-        self.monitoria1 = Monitoria("Teste1", "Quarta-feira", "14:00", "15:00", 1)
-        self.monitoria2 = Monitoria("Teste1", "Sexta-feira", "16:00", "18:00", 2)
+        monitor1 = Monitor(["Teste1"])
+        self.monitoria1 = Monitoria(monitor1,"Teste1", "Quarta-feira", "14:00", "15:00", 1, date(2026,10,21))
+        self.monitoria2 = Monitoria(monitor1,"Teste1", "Sexta-feira", "16:00", "18:00", 2, date(2026,10,23))
 
     def teste_atendimentos_monitoria(self) -> None:
         """ Testa se os atendimentos são gerados corretamente para cada monitoria """
@@ -49,7 +49,7 @@ class TestMonitorias(unittest.TestCase):
         self.assertIn("Aluno1", self.monitoria1.alunos_cancelados)
         self.assertNotIn("Aluno1", self.monitoria1.get_atendimentos()[0].alunos_cadastrados)
 
-    def teste_dois_alunos_marcar_ao_mesmo_tempo(self) -> None:
+    def teste_segundo_aluno_nao_reserva_atendimento_lotado(self) -> None:
         """ Testa se dois alunos podem marcar o mesmo atendimento ao mesmo tempo """
         atendimento = self.monitoria1.get_atendimentos()[0]
         sucesso1 = atendimento.marcar("Aluno1")
@@ -137,22 +137,34 @@ class TesteMonitoriasAlunos(unittest.TestCase):
         with self.assertRaises(ValueError):
             role_monitor.cancelar_monitoria("Monitoria Inexistente")
 
-    @unittest.skip("Teste ainda não implementado")
-    def teste_aluno_ver_monitorias(self) -> None:
         """ Um aluno deve ser capaz de ver as monitorias da matéria que ele participa"""
-        role_professor = self.professor_test1.get_role(Professor)
-        if role_professor is not None:
-            role_professor.atribuir_monitor(self.aluno_test2, 'Teste1')
-            self.assertTrue(self.aluno_test2.have_role(Monitor))
 
-        role_monitor = self.aluno_test2.get_role(Monitor)
-        role_monitor.criar_monitoria("Teste1", "Quarta-feira", "14:00", "15:00", 1,data=date(2026, 10, 21))
-        monitorias = role_monitor.get_monitorias()
-        self.assertIsNotNone(monitorias)
+    def teste_aluno_ver_monitorias(self) -> None:
+        repositorio = RepositorioMonitorias()
 
-        # Verificar que o aluno pode ver as monitorias
-        role_aluno = self.aluno_test.get_role(Aluno)
-        self.assertListEqual(role_aluno.list_monitorias(), monitorias)
+        professor = self.professor_test1.get_role(Professor)
+        professor.atribuir_monitor(self.aluno_test2, "Teste1")
+
+        monitor = self.aluno_test2.get_role(Monitor)
+        monitor.criar_monitoria("Teste1", "Quarta-feira", "14:00", "15:00", 1,data=date(2026, 10, 21))
+        repositorio.salvar(monitor.get_monitorias()[0])
+
+        aluno = self.aluno_test.get_role(Aluno)
+        resultado = aluno.list_monitorias(repositorio)
+
+        esperado = [
+            {
+                "materia": "Teste1",
+                "monitor": "teste2",
+                "data": date(2026, 10, 21),
+                "dia": "Quarta-feira",
+                "hora": hora,
+                "vagas_disponiveis": 1
+            }
+            for hora in ["14:00", "14:30"]
+        ]
+
+        self.assertEqual(resultado, esperado)
 
     def teste_aluno_marcar_monitoria(self) -> None:
         """ Um aluno deve ser capaz de marcar uma monitoria que ele queira participar """
