@@ -36,9 +36,7 @@ class TestIntegracaoPermissoes(unittest.TestCase):
         with patch.object(
             repositorio, "salvar", wraps=repositorio.salvar
         ) as salvar:
-            professor_logado.get_role(Professor).atribuir_monitor(
-                usuario_logado, "Calculo", repositorio
-            )
+            professor_logado.get_role(Professor).atribuir_monitor(usuario_logado, "Calculo", repositorio)
             salvar.assert_called_once_with(usuario_logado)
 
         sessao.encerrar_sessao()
