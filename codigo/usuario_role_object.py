@@ -1,5 +1,6 @@
 from abc import ABC
 from typing import Dict, Type, TypeVar, Optional
+from datetime import datetime
 
 from codigo.monitorias import Monitoria, Atendimento
 
@@ -110,15 +111,24 @@ class Monitor(RoleUsuario):
         self.monitorias: list[Monitoria] = []
         self.monitorias_canceladas: list[Monitoria] = []
 
-    def criar_monitoria(self, materia: str, dia: str,hora_inicio: str, hora_fim: str,Vagas: int, data=None):
+    def criar_monitoria(self, materia: str, dia: str,hora_inicio: str, hora_fim: str,Vagas: int):
         ''' Deve criar uma monitoria com hora de uma materia que ele seja monitor'''
         if materia not in self.disciplinas_monitorias:
             raise PermissionError(
                 f"O monitor não pode criar monitoria para a matéria {materia}."
             )
 
-        self.monitoria = Monitoria(monitor=self, materia=materia, dia=dia, hora_inicio=hora_inicio, hora_fim=hora_fim, Vagas=Vagas, data=data)
+        self.monitoria = Monitoria(monitor=self, materia=materia, dia=dia, hora_inicio=hora_inicio, hora_fim=hora_fim, Vagas=Vagas)
         self.monitorias.append(self.monitoria)
+
+    def editar_monitoria(self, monitoria: 'Monitoria', dia: str = None, hora_inicio: str = None, hora_fim: str = None, vagas: int = None):
+        ''' Edita os detalhes de uma monitoria existente '''
+        monitoria_encontrada = self.get_monitoria(monitoria)
+        
+        if monitoria_encontrada is None:
+            raise ValueError("A monitoria solicitada não foi encontrada como Monitoria deste Monitor.")
+            
+        monitoria_encontrada.editar_monitoria(dia, hora_inicio, hora_fim, vagas)
 
     def cancelar_monitoria(self, monitoria: Monitoria):
         ''' Cancela uma monitoria já marcada para aquela semana'''
@@ -210,6 +220,24 @@ class Professor(RoleUsuario):
         if len(role_monitor.disciplinas_monitorias) == 0:
             alvo._remover_role_interno(Monitor)
 
+    def contar_horas_trabalhadas(self, monitor: 'Monitor') -> float:
+        materias_em_comum = set(self.disciplinas_ministradas).intersection(monitor.get_disciplinas_monitorias())
+        if not materias_em_comum:
+            raise PermissionError("O monitor não leciona nenhuma matéria deste professor.")
+        
+        horas_trabalhadas = 0.0
+        
+        for monitoria in monitor.get_monitorias():
+            if monitoria.materia in self.disciplinas_ministradas:
+                # Converte as strings de volta para datetime para fazer a conta
+                inicio = datetime.strptime(monitoria.hora_inicio, "%H:%M")
+                fim = datetime.strptime(monitoria.hora_fim, "%H:%M")
+                
+                # Calcula a duração (fim - inicio) e extrai o valor em horas
+                diferenca = fim - inicio
+                horas_trabalhadas += diferenca.total_seconds() / 3600
+        
+        return horas_trabalhadas
 
 class Usuario:
     ''' Usuário Core, cuja role inicial (Aluno ou Professor) vem do login. (ComponentCore)'''

@@ -36,8 +36,7 @@ class Atendimento:
             return True
 
 class Monitoria:
-    def __init__(self, monitor: 'Monitor', materia: str, dia: str, hora_inicio: str , hora_fim: str, Vagas: int, data: date | None = None) -> None:
-        self.data = data
+    def __init__(self, monitor: 'Monitor', materia: str, dia: str, hora_inicio: str , hora_fim: str, Vagas: int) -> None:
         self.monitor = monitor
         self.materia = materia
 
@@ -70,6 +69,28 @@ class Monitoria:
             horarios.append(hora_atual.strftime("%H:%M"))
             hora_atual += timedelta(minutes=30)
         return horarios
+
+    def editar_monitoria(self, dia: str = None, hora_inicio: str = None, hora_fim: str = None, vagas: int = None) -> None:
+        if dia:
+            self.dia = dia
+            
+        if hora_inicio or hora_fim:
+            novo_inicio = hora_inicio or self.hora_inicio
+            novo_fim = hora_fim or self.hora_fim
+            
+            i, f = datetime.strptime(novo_inicio, "%H:%M"), datetime.strptime(novo_fim, "%H:%M")
+            self.hora_inicio = i.strftime("%H:%M")
+            self.hora_fim = f.strftime("%H:%M")
+            
+            self.atendimentos = []
+            for hora in self._gerar_horarios(i, f):
+
+                vagas_atual = vagas if vagas is not None else 1
+                self.atendimentos.append(Atendimento(hora, vagas_atual, self))
+                
+        elif vagas is not None:
+            for atendimento in self.atendimentos:
+                atendimento.vagas = vagas
 
     def cancelar_atendimento(self, atendimento: Atendimento) -> None:
         atendimento.cancelar()
