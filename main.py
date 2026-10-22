@@ -158,6 +158,23 @@ def atribuir_monitor(usuario, repositorio_usuarios):
     professor.atribuir_monitor(alvo, disciplina, repositorio_usuarios)
     print(f"{alvo.get_nome()} agora é monitor de {disciplina}!")
 
+def consultar_horas_monitor(usuario, repositorio_usuarios):
+    professor = usuario.get_role(Professor)
+
+    login = input("Login do monitor: ").strip()
+    alvo = repositorio_usuarios.buscar(login)
+
+    if alvo is None:
+        raise ValueError("Usuário não encontrado")
+
+    monitor = alvo.get_role(Monitor)
+
+    if monitor is None:
+        raise ValueError("Este usuário não possui o papel de monitor")
+
+    horas = professor.contar_horas_trabalhadas(monitor)
+    print(f"Total de horas de {alvo.get_nome()}: {horas:.1f} h")
+
 
 def menu_usuario(sessao, repositorio_monitorias, repositorio_usuarios):
     usuario = sessao.usuario_atual()
@@ -176,6 +193,7 @@ def menu_usuario(sessao, repositorio_monitorias, repositorio_usuarios):
 
         if usuario.have_role(Professor):
             print("6 - Atribuir monitor")
+            print("7 - Consultar horas do monitor")
 
         print("0 - exit")
         opcao = input("").strip()
@@ -197,6 +215,8 @@ def menu_usuario(sessao, repositorio_monitorias, repositorio_usuarios):
                 cancelar_monitoria(usuario)
             elif opcao == "6" and usuario.have_role(Professor):
                 atribuir_monitor(usuario, repositorio_usuarios)
+            elif opcao == "7" and usuario.have_role(Professor):
+                consultar_horas_monitor(usuario, repositorio_usuarios)
             else:
                 print("Opção Inválida")
         
