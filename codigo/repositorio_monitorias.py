@@ -22,4 +22,4 @@ class RepositorioMonitorias:
         self.monitorias[identificador] = monitoria
 
     def listar(self):
-        pass
+        return list(self.monitorias.values())
