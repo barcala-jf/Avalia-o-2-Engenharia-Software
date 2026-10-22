@@ -21,9 +21,32 @@ class Aluno(RoleUsuario):
         self.materias: list[str] = list(materias) if materias is not None else []
         self.monitorias_marcadas: list['Atendimento'] = []
 
-    def list_monitorias(self,repositorio):
+    def list_monitorias(self, repositorio):
         ''' Deve listar as monitorias disponíveis na semana'''
-        pass
+        disponiveis = []
+
+        for monitoria in repositorio.listar():
+            if monitoria.cancelado or monitoria.data is None:
+                continue
+
+            for atendimento in monitoria.get_atendimentos():
+                vagas_livres = (
+                    atendimento.vagas - len(atendimento.alunos_cadastrados)
+                )
+
+                if atendimento.cancelado or vagas_livres <= 0:
+                    continue
+
+                disponiveis.append({
+                    "materia": monitoria.materia,
+                    "monitor": monitoria.monitor.usuario.get_nome(),
+                    "data": monitoria.data,
+                    "dia": monitoria.dia,
+                    "hora": atendimento.hora,
+                    "vagas_disponiveis": vagas_livres
+                })
+
+        return disponiveis
 
     def marcar_monitoria(self, atendimento: Atendimento):
         if atendimento.cancelado:
