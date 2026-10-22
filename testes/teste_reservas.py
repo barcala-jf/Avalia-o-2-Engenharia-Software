@@ -72,3 +72,26 @@ class TestReservas(unittest.TestCase):
 
         self.assertNotIn(atendimento,aluno.get_role(Aluno).get_monitorias_marcadas())
         self.assertNotIn(aluno, atendimento.alunos_cadastrados)
+
+    def test_bloqueia_reserva_duplicada(self):
+        monitoria = Monitoria(
+            monitor=Monitor(["Calculo"]),
+            materia="Calculo",
+            dia="Quarta-feira",
+            hora_inicio="14:00",
+            hora_fim="15:00",
+            Vagas=2,
+            data=date(2026, 10, 28)
+        )
+        atendimento = monitoria.get_atendimentos()[0]
+        aluno = Usuario("Lorenzo", "1", "1234", Aluno())
+        papel = aluno.get_role(Aluno)
+
+        papel.marcar_monitoria(atendimento)
+
+        with self.assertRaisesRegex(ValueError, "Reserva já realizada"):
+            papel.marcar_monitoria(atendimento)
+
+        self.assertEqual(papel.get_monitorias_marcadas().count(atendimento), 1)
+        self.assertEqual(atendimento.alunos_cadastrados.count(aluno), 1)
+        self.assertEqual(atendimento.vagas - len(atendimento.alunos_cadastrados),1)
