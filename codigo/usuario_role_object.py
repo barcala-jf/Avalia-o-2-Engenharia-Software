@@ -26,9 +26,14 @@ class Aluno(RoleUsuario):
         pass
 
     def marcar_monitoria(self, atendimento: Atendimento):
-        ''' Deve selecionar e marcar a monitoria'''
+        '''Reserva o atendimento e adiciona à agenda após confirmação.'''
+        if atendimento.cancelado:
+            raise ValueError("Atendimento cancelado")
+
+        if not atendimento.marcar(self.usuario):
+            raise ValueError("Horário Lotado")
+
         self.get_monitorias_marcadas().append(atendimento)
-        atendimento.marcar(self.usuario)
 
     def cancelar_monitoria(self, atendimento: Atendimento):
         ''' Deve cancelar uma monitoria já marcada'''
