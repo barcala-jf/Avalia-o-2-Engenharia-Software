@@ -27,7 +27,7 @@ class Aluno(RoleUsuario):
         disponiveis = []
 
         for monitoria in repositorio.listar():
-            if monitoria.cancelado or monitoria.data is None:
+            if monitoria.cancelado:
                 continue
 
             for atendimento in monitoria.get_atendimentos():
@@ -41,7 +41,6 @@ class Aluno(RoleUsuario):
                 disponiveis.append({
                     "materia": monitoria.materia,
                     "monitor": monitoria.monitor.usuario.get_nome(),
-                    "data": monitoria.data,
                     "dia": monitoria.dia,
                     "hora": atendimento.hora,
                     "vagas_disponiveis": vagas_livres
@@ -58,22 +57,16 @@ class Aluno(RoleUsuario):
 
         monitoria = atendimento.monitoria
 
-        if monitoria.data is None:
-            raise ValueError("Data da monitoria obrigatória")
-
-        semana = monitoria.data.isocalendar()[:2]
-
-        reservas_na_semana = sum(
+        reservas_da_disciplina = sum(
             1
             for reserva in self.monitorias_marcadas
             if not reserva.cancelado
             and reserva.monitoria.materia == monitoria.materia
-            and reserva.monitoria.data is not None
-            and reserva.monitoria.data.isocalendar()[:2] == semana
         )
 
-        if reservas_na_semana >= 2:
-            raise ValueError("Limite semanal atingido para esta disciplina")
+        if reservas_da_disciplina >= 2:
+            raise ValueError("Limite de reservas atingido para esta disciplina"
+        )
 
         if not atendimento.marcar(self.usuario):
             raise ValueError("Horário Lotado")

@@ -13,8 +13,7 @@ class TestCancelamentoReserva(unittest.TestCase):
             dia="Quarta-feira",
             hora_inicio="14:00",
             hora_fim="15:00",
-            Vagas=1,
-            data=date(2026, 10, 21)
+            Vagas=1
         )
         atendimento = monitoria.get_atendimentos()[0]
 
