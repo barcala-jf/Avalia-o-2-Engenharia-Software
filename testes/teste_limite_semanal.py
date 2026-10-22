@@ -91,3 +91,22 @@ class TestLimiteSemanal(unittest.TestCase):
         criada = monitor.get_monitorias()[-1]
 
         self.assertEqual(criada.data, date(2026, 10, 21))
+
+
+    def test_bloqueia_reserva_sem_data(self):
+        monitoria = Monitoria(
+            monitor=Monitor(["Calculo"]),
+            materia="Calculo",
+            dia="Quarta-feira",
+            hora_inicio="14:00",
+            hora_fim="15:00",
+            Vagas=2
+        )
+        aluno = Usuario("Lorenzo", "1", "1234", Aluno())
+        atendimento = monitoria.get_atendimentos()[0]
+
+        with self.assertRaisesRegex(ValueError, "Data da monitoria obrigatória"):
+            aluno.get_role(Aluno).marcar_monitoria(atendimento)
+
+        self.assertNotIn(aluno, atendimento.alunos_cadastrados)
+        self.assertEqual(aluno.get_role(Aluno).get_monitorias_marcadas(), [])
