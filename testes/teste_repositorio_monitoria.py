@@ -84,3 +84,31 @@ class TestRepositorioMonitorias(unittest.TestCase):
 
         with self.assertRaises(KeyError):
             repositorio.atualizar(999, monitoria)
+
+    def test_listar_monitorias_cadastradas(self):
+        repositorio = RepositorioMonitorias()
+        monitor = Monitor(["Cálculo"])
+
+        monitoria1 = Monitoria(
+            monitor=monitor,
+            materia="Calculo",
+            dia="Quarta-feira",
+            hora_inicio="14:00",
+            hora_fim="15:00",
+            Vagas=2
+        )
+
+        monitoria2 = Monitoria(
+            monitor=monitor,
+            materia="Calculo",
+            dia="Sexta-feira",
+            hora_inicio="16:00",
+            hora_fim="17:00",
+            Vagas=1
+        )
+
+        repositorio.salvar(monitoria1)
+        repositorio.salvar(monitoria2)
+
+        resultado = repositorio.listar()
+        self.assertCountEqual(resultado, [monitoria1, monitoria2])

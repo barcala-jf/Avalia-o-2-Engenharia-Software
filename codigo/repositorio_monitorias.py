@@ -20,3 +20,6 @@ class RepositorioMonitorias:
             raise KeyError("Monitoria não encontrada")
 
         self.monitorias[identificador] = monitoria
+
+    def listar(self):
+        pass
