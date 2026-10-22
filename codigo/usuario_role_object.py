@@ -52,6 +52,9 @@ class Aluno(RoleUsuario):
         if atendimento.cancelado:
             raise ValueError("Atendimento cancelado")
 
+        if atendimento in self.monitorias_marcadas:
+            raise ValueError("Reserva já realizada")
+
         monitoria = atendimento.monitoria
 
         if monitoria.data is None:
