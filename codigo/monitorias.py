@@ -45,6 +45,14 @@ class Monitoria:
         self.hora_inicio = i.strftime("%H:%M")
         self.hora_fim = f.strftime("%H:%M")
 
+        i = datetime.strptime(hora_inicio, "%H:%M")
+        f = datetime.strptime(hora_fim, "%H:%M")
+
+        duracao_minutos = (f - i).total_seconds() / 60
+
+        if duracao_minutos <= 0 or duracao_minutos % 30 != 0:
+            raise ValueError("A duração deve ser positiva e múltipla de 30 minutos")
+
         self.atendimentos = []
         for hora in self._gerar_horarios(i, f):
             self.atendimentos.append(Atendimento(hora, Vagas, self))
