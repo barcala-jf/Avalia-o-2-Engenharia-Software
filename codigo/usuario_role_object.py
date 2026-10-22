@@ -82,12 +82,14 @@ class Monitor(RoleUsuario):
         self.monitorias: list[Monitoria] = []
         self.monitorias_canceladas: list[Monitoria] = []
 
-    def criar_monitoria(self, materia: str, dia: str, hora_inicio: str , hora_fim: str, Vagas: int):
+    def criar_monitoria(self, materia: str, dia: str,hora_inicio: str, hora_fim: str,Vagas: int, data=None):
         ''' Deve criar uma monitoria com hora de uma materia que ele seja monitor'''
-        if  materia not in self.disciplinas_monitorias:
-            raise PermissionError(f"O monitor {self} não pode criar monitoria para a matéria {materia}.")
-        
-        self.monitoria = Monitoria(self, materia, dia, hora_inicio, hora_fim, Vagas)
+        if materia not in self.disciplinas_monitorias:
+            raise PermissionError(
+                f"O monitor não pode criar monitoria para a matéria {materia}."
+            )
+
+        self.monitoria = Monitoria(monitor=self, materia=materia, dia=dia, hora_inicio=hora_inicio, hora_fim=hora_fim, Vagas=Vagas, data=data)
         self.monitorias.append(self.monitoria)
 
     def cancelar_monitoria(self, monitoria: Monitoria):
