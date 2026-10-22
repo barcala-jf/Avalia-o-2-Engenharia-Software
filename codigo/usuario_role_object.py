@@ -21,7 +21,7 @@ class Aluno(RoleUsuario):
         self.materias: list[str] = list(materias) if materias is not None else []
         self.monitorias_marcadas: list['Atendimento'] = []
 
-    def list_monitorias(self):
+    def list_monitorias(self,repositorio):
         ''' Deve listar as monitorias disponíveis na semana'''
         pass
 
