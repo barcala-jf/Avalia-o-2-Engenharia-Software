@@ -1,5 +1,4 @@
 import unittest
-from datetime import date
 from codigo.monitorias import Monitoria
 from codigo.repositorio_monitorias import RepositorioMonitorias
 from codigo.usuario_role_object import Usuario, Aluno, Professor, Monitor
@@ -18,8 +17,7 @@ class TestConsultaMonitorias(unittest.TestCase):
             dia="Quarta-feira",
             hora_inicio="14:00",
             hora_fim="15:30",
-            Vagas=1,
-            data=date(2026, 10, 28)
+            Vagas=1
         )
         repositorio.salvar(monitoria)
 
@@ -35,7 +33,6 @@ class TestConsultaMonitorias(unittest.TestCase):
         self.assertEqual(resultado, [{
             "materia": "Calculo",
             "monitor": "Neymar",
-            "data": date(2026, 10, 28),
             "dia": "Quarta-feira",
             "hora": "15:00",
             "vagas_disponiveis": 1
@@ -58,8 +55,7 @@ class TestConsultaMonitorias(unittest.TestCase):
             dia="Quarta-feira",
             hora_inicio="14:00",
             hora_fim="15:00",
-            Vagas=2,
-            data=date(2026, 10, 28)
+            Vagas=2
         )
         monitoria = monitor.get_monitorias()[-1]
         repositorio.salvar(monitoria)
@@ -83,8 +79,7 @@ class TestConsultaMonitorias(unittest.TestCase):
             dia="Quarta-feira",
             hora_inicio="14:00",
             hora_fim="15:00",
-            Vagas=2,
-            data=date(2026, 10, 28)
+            Vagas=2
         )
         monitoria = dono.get_monitorias()[-1]
 

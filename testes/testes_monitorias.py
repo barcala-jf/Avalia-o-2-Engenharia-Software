@@ -1,7 +1,6 @@
 import unittest
 from codigo.monitorias import Monitoria
 from codigo.usuario_role_object import Aluno, Monitor, Professor, Usuario
-from datetime import date
 from codigo.repositorio_monitorias import RepositorioMonitorias
 
 class TestMonitorias(unittest.TestCase):
@@ -9,8 +8,8 @@ class TestMonitorias(unittest.TestCase):
     def setUp(self) -> None:
         """ Cria ambiente de testes """
         monitor1 = Monitor(["Teste1"])
-        self.monitoria1 = Monitoria(monitor1,"Teste1", "Quarta-feira", "14:00", "15:00", 1, date(2026,10,21))
-        self.monitoria2 = Monitoria(monitor1,"Teste1", "Sexta-feira", "16:00", "18:00", 2, date(2026,10,23))
+        self.monitoria1 = Monitoria(monitor1,"Teste1", "Quarta-feira", "14:00", "15:00", 1)
+        self.monitoria2 = Monitoria(monitor1,"Teste1", "Sexta-feira", "16:00", "18:00", 2)
 
     def teste_atendimentos_monitoria(self) -> None:
         """ Testa se os atendimentos são gerados corretamente para cada monitoria """
@@ -93,7 +92,7 @@ class TesteMonitoriasAlunos(unittest.TestCase):
             self.assertTrue(self.aluno_test2.have_role(Monitor))
 
         role_monitor = self.aluno_test2.get_role(Monitor) 
-        role_monitor.criar_monitoria("Teste1", "Quarta-feira", "14:00", "15:00", 1,data=date(2026, 10, 21))
+        role_monitor.criar_monitoria("Teste1", "Quarta-feira", "14:00", "15:00", 1)
 
         self.assertIsNotNone(role_monitor.get_monitorias())
 
@@ -106,7 +105,7 @@ class TesteMonitoriasAlunos(unittest.TestCase):
 
         role_monitor = self.aluno_test2.get_role(Monitor) 
         with self.assertRaises(PermissionError):
-            role_monitor.criar_monitoria("Teste3", "Quarta-feira", "14:00", "15:00", 1,data=date(2026, 10, 21))
+            role_monitor.criar_monitoria("Teste3", "Quarta-feira", "14:00", "15:00", 1)
 
     def teste_monitor_cancelar_monitoria(self) -> None:
         """ Um monitor deve ser capaz de cancelar uma monitoria que ele tenha criado """
@@ -116,7 +115,7 @@ class TesteMonitoriasAlunos(unittest.TestCase):
             self.assertTrue(self.aluno_test2.have_role(Monitor))
 
         role_monitor = self.aluno_test2.get_role(Monitor) 
-        role_monitor.criar_monitoria("Teste1", "Quarta-feira", "14:00", "15:00", 1,data=date(2026, 10, 21))
+        role_monitor.criar_monitoria("Teste1", "Quarta-feira", "14:00", "15:00", 1)
         monitorias = role_monitor.get_monitorias()
         self.assertIsNotNone(monitorias)
 
@@ -146,7 +145,7 @@ class TesteMonitoriasAlunos(unittest.TestCase):
         professor.atribuir_monitor(self.aluno_test2, "Teste1")
 
         monitor = self.aluno_test2.get_role(Monitor)
-        monitor.criar_monitoria("Teste1", "Quarta-feira", "14:00", "15:00", 1,data=date(2026, 10, 21))
+        monitor.criar_monitoria("Teste1", "Quarta-feira", "14:00", "15:00", 1)
         repositorio.salvar(monitor.get_monitorias()[0])
 
         aluno = self.aluno_test.get_role(Aluno)
@@ -156,7 +155,6 @@ class TesteMonitoriasAlunos(unittest.TestCase):
             {
                 "materia": "Teste1",
                 "monitor": "teste2",
-                "data": date(2026, 10, 21),
                 "dia": "Quarta-feira",
                 "hora": hora,
                 "vagas_disponiveis": 1
@@ -174,7 +172,7 @@ class TesteMonitoriasAlunos(unittest.TestCase):
             self.assertTrue(self.aluno_test2.have_role(Monitor))
 
         role_monitor = self.aluno_test2.get_role(Monitor)
-        role_monitor.criar_monitoria("Teste1", "Quarta-feira", "14:00", "15:00", 1,data=date(2026, 10, 21))
+        role_monitor.criar_monitoria("Teste1", "Quarta-feira", "14:00", "15:00", 1)
         monitorias = role_monitor.get_monitorias()
         self.assertIsNotNone(monitorias)
 
@@ -193,7 +191,7 @@ class TesteMonitoriasAlunos(unittest.TestCase):
             self.assertTrue(self.aluno_test2.have_role(Monitor))
 
         role_monitor = self.aluno_test2.get_role(Monitor)
-        role_monitor.criar_monitoria("Teste1", "Quarta-feira", "14:00", "15:00", 1,data=date(2026, 10, 21))
+        role_monitor.criar_monitoria("Teste1", "Quarta-feira", "14:00", "15:00", 1)
         monitorias = role_monitor.get_monitorias()
         self.assertIsNotNone(monitorias)
 
