@@ -1,5 +1,5 @@
 import threading
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 
 class Atendimento:
     def __init__(self, hora: str, vagas: int, monitoria: 'Monitoria') -> None:
@@ -36,8 +36,8 @@ class Atendimento:
             return True
 
 class Monitoria:
-    def __init__(self, monitor: 'Monitor', materia: str, dia: str, hora_inicio: str , hora_fim: str, Vagas: int) -> None:
-        
+    def __init__(self, monitor: 'Monitor', materia: str, dia: str, hora_inicio: str , hora_fim: str, Vagas: int, data: date | None = None) -> None:
+        self.data = data
         self.monitor = monitor
         self.materia = materia
 
