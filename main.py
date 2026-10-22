@@ -115,7 +115,32 @@ def cancelar_reserva(usuario):
         aluno.cancelar_monitoria(atendimento)
         print("Reserva Cancelada")
 
+def cancelar_monitoria(usuario):
+    monitor = usuario.get_role(Monitor)
+    monitorias = [monitoria for monitoria in monitor.get_monitorias() if not monitoria.cancelado
+    ]
 
+    if not monitorias:
+        print("Nenhuma monitoria ativa para cancelar.")
+        return
+
+    for numero, monitoria in enumerate(monitorias, start=1):
+        print(
+            f"{numero} - {monitoria.materia} | "
+            f"{monitoria.dia} | "
+            f"{monitoria.hora_inicio} às {monitoria.hora_fim}"
+        )
+
+    escolha = int(input("Escolha a monitoria (0 para voltar): "))
+
+    if escolha == 0:
+        return
+
+    if escolha < 1 or escolha > len(monitorias):
+        raise ValueError("Monitoria inválida")
+
+    monitor.cancelar_monitoria(monitorias[escolha - 1])
+    print("Monitoria e seus atendimentos cancelados!")
 
 def menu_usuario(sessao, repositorio_monitorias):
     usuario = sessao.usuario_atual()
@@ -125,13 +150,12 @@ def menu_usuario(sessao, repositorio_monitorias):
         
         if usuario.have_role(Aluno):
             print("1 - Consultar Atendimentos")
+            print("3 - Reservar atendimento")
+            print("4 - Cancelar reserva")
 
         if usuario.have_role(Monitor):
             print("2 - Criar Monitoria")
-
-        if usuario.have_role(Aluno):
-            print("3 - Reservar atendimento")
-            print("4 - Cancelar reserva")
+            print("5 - Cancelar Monitoria")
 
         print("0 - exit")
         opcao = input("").strip()
@@ -149,6 +173,8 @@ def menu_usuario(sessao, repositorio_monitorias):
                 reservar_atendimento(usuario, repositorio_monitorias)
             elif opcao == "4" and usuario.have_role(Aluno):
                 cancelar_reserva(usuario)
+            elif opcao == "5" and usuario.have_role(Monitor):
+                cancelar_monitoria(usuario)
             else:
                 print("Opção Inválida")
         
