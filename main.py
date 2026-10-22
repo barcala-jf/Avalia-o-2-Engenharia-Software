@@ -142,7 +142,24 @@ def cancelar_monitoria(usuario):
     monitor.cancelar_monitoria(monitorias[escolha - 1])
     print("Monitoria e seus atendimentos cancelados!")
 
-def menu_usuario(sessao, repositorio_monitorias):
+
+def atribuir_monitor(usuario, repositorio_usuarios):
+    professor = usuario.get_role(Professor)
+
+    login = input("Login do aluno: ").strip()
+    alvo = repositorio_usuarios.buscar(login)
+
+    if alvo is None:
+        raise ValueError("Usuário não encontrado")
+
+    print("Disciplinas do professor:",", ".join(professor.disciplinas_ministradas),)
+    disciplina = input("Disciplina: ").strip()
+
+    professor.atribuir_monitor(alvo, disciplina, repositorio_usuarios)
+    print(f"{alvo.get_nome()} agora é monitor de {disciplina}!")
+
+
+def menu_usuario(sessao, repositorio_monitorias, repositorio_usuarios):
     usuario = sessao.usuario_atual()
 
     while True:
@@ -156,6 +173,9 @@ def menu_usuario(sessao, repositorio_monitorias):
         if usuario.have_role(Monitor):
             print("2 - Criar Monitoria")
             print("5 - Cancelar Monitoria")
+
+        if usuario.have_role(Professor):
+            print("6 - Atribuir monitor")
 
         print("0 - exit")
         opcao = input("").strip()
@@ -175,6 +195,8 @@ def menu_usuario(sessao, repositorio_monitorias):
                 cancelar_reserva(usuario)
             elif opcao == "5" and usuario.have_role(Monitor):
                 cancelar_monitoria(usuario)
+            elif opcao == "6" and usuario.have_role(Professor):
+                atribuir_monitor(usuario, repositorio_usuarios)
             else:
                 print("Opção Inválida")
         
@@ -210,7 +232,7 @@ def main():
             continue
 
         sessao.iniciar_sessao(usuario)
-        menu_usuario(sessao, repositorio_monitorias)
+        menu_usuario(sessao, repositorio_monitorias, repositorio_usuarios)
 
 if __name__ == "__main__":
     main()
