@@ -65,7 +65,55 @@ def consultar_monitorias(usuario, repositorio):
             f"Vagas: {atendimento['vagas_disponiveis']}"
         )
 
+def escolher_atendimento(atendimentos):
+    if not atendimentos:
+        print("Nenhum atendimento encontrado")
+        return None
+    
+    for numero, atendimento in enumerate(atendimentos, start=1):
+        monitoria = atendimento.monitoria
+        status = "Cancelado" if atendimento.cancelado else "Ativo"
 
+        print(
+            f"{numero} - {monitoria.materia} | "
+            f"{monitoria.dia} às {atendimento.hora} | "
+            f"Monitor: {monitoria.monitor.usuario.get_nome()} | "
+            f"{status}"
+        )
+
+    escolha = int(input("Escolha o atendimento (0 para voltar): "))
+
+    if escolha == 0:
+        return None
+    if escolha < 1 or escolha > len(atendimentos):
+        raise ValueError("Opção Inválida")
+
+    return atendimentos[escolha - 1]
+
+def reservar_atendimento(usuario, repositorio):
+    aluno = usuario.get_role(Aluno)
+    disponiveis = []
+
+    for monitoria in repositorio.listar():
+        if monitoria.cancelado:
+            continue
+
+        for atendimento in monitoria.get_atendimentos():
+            if not atendimento.cancelado and (len(atendimento.alunos_cadastrados) < atendimento.vagas):
+                disponiveis.append(atendimento)
+    atendimento = escolher_atendimento(disponiveis)
+
+    if atendimento is not None:
+        aluno.marcar_monitoria(atendimento)
+        print("Reserva Realizada!")
+
+def cancelar_reserva(usuario):
+    aluno = usuario.get_role(Aluno)
+    atendimento = escolher_atendimento(aluno.get_monitorias_marcadas())
+
+    if atendimento is not None:
+        aluno.cancelar_monitoria(atendimento)
+        print("Reserva Cancelada")
 
 
 
@@ -81,6 +129,10 @@ def menu_usuario(sessao, repositorio_monitorias):
         if usuario.have_role(Monitor):
             print("2 - Criar Monitoria")
 
+        if usuario.have_role(Aluno):
+            print("3 - Reservar atendimento")
+            print("4 - Cancelar reserva")
+
         print("0 - exit")
         opcao = input("").strip()
     
@@ -93,6 +145,10 @@ def menu_usuario(sessao, repositorio_monitorias):
                 consultar_monitorias(usuario, repositorio_monitorias)
             elif opcao == "2" and usuario.have_role(Monitor):
                 criar_monitoria(usuario, repositorio_monitorias)
+            elif opcao == "3" and usuario.have_role(Aluno):
+                reservar_atendimento(usuario, repositorio_monitorias)
+            elif opcao == "4" and usuario.have_role(Aluno):
+                cancelar_reserva(usuario)
             else:
                 print("Opção Inválida")
         
