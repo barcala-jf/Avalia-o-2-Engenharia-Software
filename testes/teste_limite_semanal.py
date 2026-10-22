@@ -75,3 +75,19 @@ class TestLimiteSemanal(unittest.TestCase):
 
         self.assertEqual(len(papel.get_monitorias_marcadas()), 3)
         self.assertIn(aluno, novo_atendimento.alunos_cadastrados)
+
+    def test_criar_monitoria_preserva_data(self):
+        monitor = Monitor(["Calculo"])
+
+        monitor.criar_monitoria(
+            materia="Calculo",
+            dia="Quarta-feira",
+            hora_inicio="14:00",
+            hora_fim="15:00",
+            Vagas=2,
+            data=date(2026, 10, 21)
+        )
+
+        criada = monitor.get_monitorias()[-1]
+
+        self.assertEqual(criada.data, date(2026, 10, 21))
