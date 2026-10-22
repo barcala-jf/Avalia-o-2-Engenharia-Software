@@ -26,14 +26,30 @@ class Aluno(RoleUsuario):
         pass
 
     def marcar_monitoria(self, atendimento: Atendimento):
-        '''Reserva o atendimento e adiciona à agenda após confirmação.'''
         if atendimento.cancelado:
             raise ValueError("Atendimento cancelado")
+
+        monitoria = atendimento.monitoria
+
+        if monitoria.data is not None:
+            semana = monitoria.data.isocalendar()[:2]
+
+            reservas_na_semana = sum(
+                1
+                for reserva in self.monitorias_marcadas
+                if not reserva.cancelado
+                and reserva.monitoria.materia == monitoria.materia
+                and reserva.monitoria.data is not None
+                and reserva.monitoria.data.isocalendar()[:2] == semana
+            )
+
+            if reservas_na_semana >= 2:
+                raise ValueError("Limite semanal atingido para esta disciplina")
 
         if not atendimento.marcar(self.usuario):
             raise ValueError("Horário Lotado")
 
-        self.get_monitorias_marcadas().append(atendimento)
+        self.monitorias_marcadas.append(atendimento)
 
     def cancelar_monitoria(self, atendimento: Atendimento):
         ''' Deve cancelar uma monitoria já marcada'''
